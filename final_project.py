@@ -239,6 +239,7 @@ def form_tuple_list(data1):
     list_of_tuple.append(('Language', data1[6]))
     list_of_tuple.append(('Country', data1[7]))
     list_of_tuple.append(('Awards', data1[8]))
+    list_of_tuple.append(('imdbRating', data1[9]))
 
     return list_of_tuple
 
@@ -266,7 +267,8 @@ def get_movie_info(name):
         pass
     else:
         datattt = [content1['Title'].title(), content1['Released'], content1['Runtime'], content1['Genre'],
-                 content1['Director'], content1['Actors'], content1['Language'], content1['Country'], content1['Awards']]
+                   content1['Director'], content1['Actors'], content1['Language'], content1['Country'],
+                   content1['Awards'], content1['imdbRating']]
         list_of_tuple = form_tuple_list(datattt)
 
     data = [tp[1] for tp in list_of_tuple]
@@ -306,9 +308,11 @@ else:
     data_in_rows1 = []
     for t in fetch_list:
         data1, list_of_tuple1 = get_movie_info(t)
+        if len(data1) < 10:
+            data1, list_of_tuple1 = get_movie_info(t.lower())
         data_in_rows1.append(data1)
         df = pd.DataFrame(data_in_rows1, columns=['name', 'released', 'runtime', 'genre', 'director',
-                                                  'actors', 'language', 'country', 'awards'])
+                                                  'actors', 'language', 'country', 'awards', 'imdbRating'])
         save_to_database(df, table_name="Movie_Info")
 
 
@@ -339,9 +343,9 @@ while 1:
                 print_query_result(data_q)
             else:
                 data2, list_of_tuple2 = get_movie_info(y)
-                df = pd.DataFrame(np.array(data2).reshape((1, 9)), columns=['name', 'released', 'runtime', 'genre',
+                df = pd.DataFrame(np.array(data2).reshape((1, 10)), columns=['name', 'released', 'runtime', 'genre',
                                                                             'director', 'actors', 'language', 'country',
-                                                                            'awards'])
+                                                                            'awards', 'imdbRating'])
                 save_to_database_append(df, table_name="Movie_Info")
                 print_query_result(list_of_tuple2)
         exit()
